@@ -42,13 +42,13 @@ const wchar_t* CLyricPlugin::GetInfo(PluginInfoIndex index)
         str.LoadString(IDS_PLUGIN_DESCRIPTION);
         return str.GetString();
     case TMI_AUTHOR:
-        return L"ZhongYang";
+        return L"SY Cheng";
     case TMI_COPYRIGHT:
-        return L"Copyright (C) 2025";
+        return L"Copyright (C) 2026";
     case TMI_VERSION:
-        return L"1.0";
+        return L"0.0.1";
     case ITMPlugin::TMI_URL:
-        return L"https://github.com/zhongyang219/TrafficMonitor";
+        return L"https://github.com/igugyj/TrafficMonitorLyricPlugin";
     default:
         break;
     }
@@ -201,7 +201,7 @@ const wchar_t* CLyricPlugin::CLyricItem::GetItemName() const
 
 const wchar_t* CLyricPlugin::CLyricItem::GetItemId() const
 {
-    return L"LyricPlugin001";
+    return L"LyricPlugin";
 }
 
 const wchar_t* CLyricPlugin::CLyricItem::GetItemLableText() const

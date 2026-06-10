@@ -28,6 +28,9 @@ void CDataManager::LoadConfig(const std::wstring& config_dir)
     {
         size_t index = module_path.find_last_of(L"\\/");
         std::wstring module_file_name = module_path.substr(index + 1);
+        size_t dot = module_file_name.find_last_of(L".");
+        if (dot != std::wstring::npos)
+            module_file_name = module_file_name.substr(0, dot);
         m_config_path = config_dir + module_file_name;
     }
     m_config_path += L".ini";

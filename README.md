@@ -1,5 +1,8 @@
 # LyricPlugin
 
+![Static Badge](https://img.shields.io/badge/AI-100%25-68c0fd?style=plastic)
+![License](https://img.shields.io/badge/License-MIT-1c8139?style=plastic)
+
 [TrafficMonitor](https://github.com/zhongyang219/TrafficMonitor) 的歌词显示插件，实时获取 LX Music 正在播放的歌词并渲染到任务栏。
 
 ## 功能
@@ -12,6 +15,8 @@
 - 暂停/停止/无信号时自动隐藏插件
 - 鼠标悬停 ToolTip 显示歌曲名 - 歌手
 - 所有设置保存到 `.ini` 文件
+
+![](/Screenshots/image.png)
 
 ## 下载
 
