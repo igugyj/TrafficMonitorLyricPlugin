@@ -1,0 +1,21 @@
+# Visual Studio
+.vs/
+*.aps
+*.vcxproj.user
+*.sdf
+*.suo
+*.opensdf
+ipch/
+
+# Build output
+Bin/
+Release/
+Debug/
+x64/
+Win32/
+
+# Intermediate files
+LyricPlugin/
+
+# Logs
+*.log
