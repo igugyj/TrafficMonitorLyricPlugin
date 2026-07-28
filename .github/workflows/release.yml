@@ -1,5 +1,15 @@
 name: Release
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: Build only, skip creating GitHub Release
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
 
 jobs:
   release:
@@ -36,6 +46,7 @@ jobs:
           "prev_tag=$prev" | Out-File -Encoding utf8 -FilePath $env:GITHUB_OUTPUT
 
       - name: Create Release
+        if: ${{ !inputs.dry-run }}
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh

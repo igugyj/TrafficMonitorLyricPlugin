@@ -1,5 +1,15 @@
 name: Build to dist branch
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: Build only, skip push to dist branch
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -33,6 +43,7 @@ jobs:
           path: dist/
 
   push:
+    if: ${{ !inputs.dry-run }}
     needs: build
     runs-on: ubuntu-latest
     steps:
