@@ -1,0 +1,54 @@
+name: Build to dist branch
+on: workflow_dispatch
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        arch:
+          - msbuild: x64
+            out: x64
+          - msbuild: Win32
+            out: x86
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build ${{ matrix.arch.out }}
+        run: msbuild LyricPlugin.vcxproj /p:Configuration=Release /p:Platform=${{ matrix.arch.msbuild }}
+
+      - name: Collect artifacts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory dist/${{ matrix.arch.out }} -Force
+          Copy-Item "Bin\${{ matrix.arch.out }}\Release\plugins\LyricPlugin.dll" "dist/${{ matrix.arch.out }}/"
+          Copy-Item "Bin\${{ matrix.arch.out }}\Release\plugins\LyricPlugin.pdb" "dist/${{ matrix.arch.out }}/"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.arch.out }}
+          path: dist/
+
+  push:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: build-*
+
+      - name: Assemble dist
+        run: |
+          mkdir -p dist/x64 dist/x86
+          cp -r build-x64/* dist/
+          cp -r build-x86/* dist/
+
+      - name: Force push to dist branch
+        run: |
+          cd dist
+          git init
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add -A
+          git commit -m "dist: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push --force https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:dist

@@ -10,9 +10,15 @@ msbuild LyricPlugin.vcxproj /p:Configuration=Debug /p:Platform=x64
 
 Output: `Bin\x64\Debug\plugins\LyricPlugin.dll`.  
 Configurations: Debug|Release × x64|x86. Toolset v143, VS 2022, Unicode, MFC dynamic.  
-No tests, lint, formatters, typecheck, or CI exist.
+No tests, lint, formatters, or typecheck exist.
 
 **Build number** (`VER_BUILD`): auto-injected as `YYDDD` (ordinal date) by `ComputeBuildNumber` MSBuild target. Version in `.dll` properties = `major.minor.patch.YYDDD`.
+
+## CI/CD
+
+Two GitHub Actions workflows in `.github/workflows/`:
+- **dist.yml** — manual dispatch, builds x64+x86, force-pushes DLL+PDB to `dist` branch
+- **release.yml** — manual dispatch, builds x64+x86, creates GitHub Release with auto-generated notes and version compare link
 
 ## Architecture
 

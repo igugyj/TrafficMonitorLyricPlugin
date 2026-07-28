@@ -1,0 +1,45 @@
+name: Release
+on: workflow_dispatch
+
+jobs:
+  release:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version from resource.h
+        shell: pwsh
+        run: |
+          $h = Get-Content -Raw src/compat/resource.h
+          $maj = [regex]::Match($h, '#define\s+VER_MAJOR\s+(\d+)').Groups[1].Value
+          $min = [regex]::Match($h, '#define\s+VER_MINOR\s+(\d+)').Groups[1].Value
+          $pat = [regex]::Match($h, '#define\s+VER_PATCH\s+(\d+)').Groups[1].Value
+          "VER_TAG=v$maj.$min.$pat" | Out-File -Encoding utf8 -FilePath $env:GITHUB_ENV
+
+      - name: Build x64
+        run: msbuild LyricPlugin.vcxproj /p:Configuration=Release /p:Platform=x64
+
+      - name: Build x86
+        run: msbuild LyricPlugin.vcxproj /p:Configuration=Release /p:Platform=Win32
+
+      - name: Get previous tag
+        id: prev
+        shell: pwsh
+        run: |
+          $prev = git describe --tags --abbrev=0 HEAD^ 2>$null
+          if (-not $prev) { $prev = git rev-list --max-parents=0 HEAD }
+          "prev_tag=$prev" | Out-File -Encoding utf8 -FilePath $env:GITHUB_OUTPUT
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          gh release create "$env:VER_TAG" `
+            "Bin/x64/Release/plugins/LyricPlugin.dll" `
+            "Bin/Win32/Release/plugins/LyricPlugin.dll" `
+            --generate-notes `
+            --notes-start-tag "${{ steps.prev.outputs.prev_tag }}" `
+            --title "LyricPlugin $env:VER_TAG"
