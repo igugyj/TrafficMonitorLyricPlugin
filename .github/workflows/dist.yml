@@ -9,10 +9,13 @@ jobs:
           - msbuild: x64
             out: x64
           - msbuild: Win32
-            out: x86
+            out: Win32
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
 
       - name: Build ${{ matrix.arch.out }}
         run: msbuild LyricPlugin.vcxproj /p:Configuration=Release /p:Platform=${{ matrix.arch.msbuild }}
@@ -39,9 +42,9 @@ jobs:
 
       - name: Assemble dist
         run: |
-          mkdir -p dist/x64 dist/x86
+          mkdir -p dist/x64 dist/Win32
           cp -r build-x64/* dist/
-          cp -r build-x86/* dist/
+          cp -r build-Win32/* dist/
 
       - name: Force push to dist branch
         run: |

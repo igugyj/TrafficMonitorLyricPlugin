@@ -18,6 +18,9 @@ jobs:
           $pat = [regex]::Match($h, '#define\s+VER_PATCH\s+(\d+)').Groups[1].Value
           "VER_TAG=v$maj.$min.$pat" | Out-File -Encoding utf8 -FilePath $env:GITHUB_ENV
 
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
       - name: Build x64
         run: msbuild LyricPlugin.vcxproj /p:Configuration=Release /p:Platform=x64
 
