@@ -19,6 +19,7 @@ No tests, lint, formatters, typecheck, or CI exist.
 - **Rendering**: `CLyricItem` uses `IsCustomDraw()=true`. Auto-width or fixed-width with scroll.
 - **Scroll animation**: idle 500ms → scroll at `scroll_speed` px/s → pause 500ms → reset.
 - **Config**: Auto-derived from DLL filename (`LyricPlugin.ini`), written via Win32 INI APIs. Directory supplied by TrafficMonitor via `OnExtenedInfo(EI_CONFIG_DIR)`. Destructor `CDataManager::~CDataManager()` calls `SaveConfig()`.
+  - **Hot-reload**: `ShowOptionsDialog()` calls `SaveConfig()` then `ApplySettings()` to push port change to the HTTP client immediately. Without `ApplySettings()`, the old port persists until restart.
 - **Font size**: encoded as `2` (small, 0.6×height), `3` (medium, 0.75×), `4` (large, 0.9×). Default: `3`.
 
 ## Key conventions

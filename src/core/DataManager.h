@@ -22,6 +22,7 @@ public:
 
     void LoadConfig(const std::wstring& config_dir);
     void SaveConfig() const;
+    void ApplySettings();
     void FetchLyric();
 
     const std::wstring& GetCurrentLyric() const { return m_current_lyric; }

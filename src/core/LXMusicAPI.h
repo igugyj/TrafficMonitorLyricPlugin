@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <string>
-#include <vector>
 
 struct LXStatusData
 {
@@ -8,17 +7,7 @@ struct LXStatusData
     std::wstring status;
     std::wstring name;
     std::wstring singer;
-    std::wstring album;
     std::wstring lyric_line;
-    std::wstring lyric_raw;
-    double progress{ 0 };
-    double duration{ 0 };
-};
-
-struct LXLrcLine
-{
-    double time_sec{ 0 };
-    std::wstring text;
 };
 
 class CLXMusicAPI
@@ -30,8 +19,6 @@ public:
     int GetPort() const { return m_port; }
 
     bool FetchStatus(LXStatusData& out);
-
-    static std::vector<LXLrcLine> ParseLrc(const std::wstring& lrc_text);
 
 private:
     bool HttpGet(const wchar_t* path, std::string& out);

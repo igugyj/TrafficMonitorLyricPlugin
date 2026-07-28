@@ -47,6 +47,11 @@ void CDataManager::LoadConfig(const std::wstring& config_dir)
     m_api.SetPort(m_setting_data.port);
 }
 
+void CDataManager::ApplySettings()
+{
+    m_api.SetPort(m_setting_data.port);
+}
+
 void CDataManager::SaveConfig() const
 {
     wchar_t buff[32];

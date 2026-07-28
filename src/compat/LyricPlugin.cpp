@@ -140,6 +140,7 @@ ITMPlugin::OptionReturn CLyricPlugin::ShowOptionsDialog(void* hParent)
     {
         CDataManager::Instance().m_setting_data = data;
         CDataManager::Instance().SaveConfig();
+        CDataManager::Instance().ApplySettings();
         return ITMPlugin::OR_OPTION_CHANGED;
     }
     return ITMPlugin::OR_OPTION_UNCHANGED;
@@ -155,11 +156,6 @@ void CLyricPlugin::OnExtenedInfo(ExtendedInfoIndex index, const wchar_t* data)
     default:
         break;
     }
-}
-
-void CLyricPlugin::OnInitialize(ITrafficMonitor* pApp)
-{
-    m_app = pApp;
 }
 
 const wchar_t* CLyricPlugin::GetTooltipInfo()
@@ -274,14 +270,20 @@ void CLyricPlugin::CLyricItem::DrawItem(void* hDC, int x, int y, int w, int h, b
     if (font_size == 2) font_ratio = 0.6;
     else if (font_size == 4) font_ratio = 0.9;
 
-    LOGFONTW lf = { 0 };
-    lf.lfHeight = -(int)(h * font_ratio);
-    lf.lfWeight = FW_NORMAL;
-    lf.lfQuality = CLEARTYPE_QUALITY;
-    wcscpy_s(lf.lfFaceName, setting.font_name.c_str());
-    CFont font;
-    font.CreateFontIndirectW(&lf);
-    pDC->SelectObject(&font);
+    if (font_size != m_cache_font_size || h != m_cache_height || setting.font_name != m_cache_font_name)
+    {
+        LOGFONTW lf = { 0 };
+        lf.lfHeight = -(int)(h * font_ratio);
+        lf.lfWeight = FW_NORMAL;
+        lf.lfQuality = CLEARTYPE_QUALITY;
+        wcscpy_s(lf.lfFaceName, setting.font_name.c_str());
+        m_font.DeleteObject();
+        m_font.CreateFontIndirectW(&lf);
+        m_cache_font_size = font_size;
+        m_cache_height = h;
+        m_cache_font_name = setting.font_name;
+    }
+    pDC->SelectObject(&m_font);
 
     COLORREF color = dark_mode ? RGB(230, 230, 230) : RGB(30, 30, 30);
     pDC->SetBkMode(TRANSPARENT);
