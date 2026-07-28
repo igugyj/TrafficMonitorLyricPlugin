@@ -47,13 +47,13 @@ jobs:
 
       - name: Create Release
         if: ${{ !inputs.dry-run }}
+        shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-        shell: pwsh
         run: |
-          gh release create "$env:VER_TAG" `
-            "Bin/x64/Release/plugins/LyricPlugin.dll" `
-            "Bin/Win32/Release/plugins/LyricPlugin.dll" `
-            --generate-notes `
+          New-Item -ItemType Directory staging -Force
+          Copy-Item "Bin/x64/Release/plugins/LyricPlugin.dll" "staging/LyricPlugin-$env:VER_TAG-x64.dll"
+          Copy-Item "Bin/Win32/Release/plugins/LyricPlugin.dll" "staging/LyricPlugin-$env:VER_TAG-x86.dll"
+          gh release create "$env:VER_TAG" staging/* --generate-notes `
             --notes-start-tag "${{ steps.prev.outputs.prev_tag }}" `
             --title "LyricPlugin $env:VER_TAG"
