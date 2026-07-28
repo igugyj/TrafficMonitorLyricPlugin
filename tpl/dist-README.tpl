@@ -1,8 +1,8 @@
 # LyricPlugin
 
-Version: v{version}
-Build: {date}
-Commit: {sha}
+- Version: {version}
+- Build: {date}
+- Commit: {sha}
 
 ## Files
 

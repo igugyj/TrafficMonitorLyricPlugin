@@ -47,7 +47,7 @@ jobs:
           $pat = [regex]::Match($h, '#define\s+VER_PATCH\s+(\d+)').Groups[1].Value
           $sha = "$env:GITHUB_SHA".Substring(0, 7)
           $now = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm UTC')
-          (Get-Content -Raw dist-README.tpl) -replace '{version}', "v$maj.$min.$pat" `
+          (Get-Content -Raw tpl/dist-README.tpl) -replace '{version}', "v$maj.$min.$pat" `
             -replace '{date}', $now `
             -replace '{sha}', $sha `
             -replace '{repo}', '${{ github.repository }}' `
