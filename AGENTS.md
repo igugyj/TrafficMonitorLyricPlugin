@@ -12,6 +12,8 @@ Output: `Bin\x64\Debug\plugins\LyricPlugin.dll`.
 Configurations: Debug|Release × x64|x86. Toolset v143, VS 2022, Unicode, MFC dynamic.  
 No tests, lint, formatters, typecheck, or CI exist.
 
+**Build number** (`VER_BUILD`): auto-injected as `YYDDD` (ordinal date) by `ComputeBuildNumber` MSBuild target. Version in `.dll` properties = `major.minor.patch.YYDDD`.
+
 ## Architecture
 
 - **Entrypoint**: `TMPluginGetInstance()` at `src/compat/LyricPlugin.cpp:185` — returns singleton `CLyricPlugin::m_instance`.

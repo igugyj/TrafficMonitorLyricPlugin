@@ -191,6 +191,21 @@
     <ResourceCompile Include="src\compat\LyricPlugin.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Target Name="ComputeBuildNumber" BeforeTargets="ClCompile;ResourceCompile">
+    <PropertyGroup>
+      <_YY>$([System.DateTime]::Now.ToString('yy'))</_YY>
+      <_DDD>$([System.DateTime]::Now.DayOfYear.ToString('000'))</_DDD>
+      <_BuildNumber>$(_YY)$(_DDD)</_BuildNumber>
+    </PropertyGroup>
+    <ItemGroup>
+      <ClCompile>
+        <PreprocessorDefinitions>VER_BUILD=$(_BuildNumber);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      </ClCompile>
+      <ResourceCompile>
+        <PreprocessorDefinitions>VER_BUILD=$(_BuildNumber);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      </ResourceCompile>
+    </ItemGroup>
+  </Target>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>

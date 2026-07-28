@@ -10,6 +10,16 @@
 #define IDC_FONT_EDIT                   1005
 #define IDC_FONT_BUTTON                 1006
 
+#define VER_MAJOR                       0
+#define VER_MINOR                       2
+#define VER_PATCH                       0
+#ifndef VER_BUILD
+#define VER_BUILD                       0
+#endif
+
+#define VER_FILE_VERSION_STR            "0.2.0"
+#define VER_PRODUCT_VERSION_STR         VER_FILE_VERSION_STR
+
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        102

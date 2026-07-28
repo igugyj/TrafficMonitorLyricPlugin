@@ -46,7 +46,7 @@ const wchar_t* CLyricPlugin::GetInfo(PluginInfoIndex index)
     case TMI_COPYRIGHT:
         return L"Copyright (C) 2026";
     case TMI_VERSION:
-        return L"0.0.1";
+        return L"" VER_FILE_VERSION_STR;
     case ITMPlugin::TMI_URL:
         return L"https://github.com/igugyj/TrafficMonitorLyricPlugin";
     default:
