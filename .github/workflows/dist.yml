@@ -49,7 +49,6 @@ jobs:
           $now = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm UTC')
           $repo = "${{ github.repository }}"
           $owner = "${{ github.repository_owner }}"
-          $bt = [char]96
           @"
 # LyricPlugin
 
@@ -59,21 +58,21 @@ Commit: $sha
 
 ## Files
 
-- ${bt}x64/LyricPlugin.dll${bt} / ${bt}x64/LyricPlugin.pdb${bt} — 64-bit build
-- ${bt}Win32/LyricPlugin.dll${bt} / ${bt}Win32/LyricPlugin.pdb${bt} — 32-bit build
+- ~x64/LyricPlugin.dll~ / ~x64/LyricPlugin.pdb~ — 64-bit build
+- ~Win32/LyricPlugin.dll~ / ~Win32/LyricPlugin.pdb~ — 32-bit build
 
 ## Installation
 
-Copy the ${bt}.dll${bt} and ${bt}.pdb${bt} to TrafficMonitor's ${bt}plugins/${bt} directory.
+Copy the ~.dll~ and ~.pdb~ to TrafficMonitor's ~plugins/~ directory.
 
 ## Usage
 
-Requires LX Music running with Web API enabled (default port ${bt}23330${bt}).
+Requires LX Music running with Web API enabled (default port ~23330~).
 
 Configure via plugin options dialog:
 - **Port** — LX Music Web API port
 - **Font / Size / Scroll Speed** — lyric display settings
-- **Width** — ${bt}0${bt} for auto-width
+- **Width** — ~0~ for auto-width
 
 ## License
 
@@ -83,7 +82,7 @@ MIT © $owner
 
 - Source: https://github.com/$repo
 - Releases: https://github.com/$repo/releases
-"@ | Out-File -Encoding utf8 dist/README.md
+"@ -replace '~', [char]96 | Out-File -Encoding utf8 dist/README.md
 
       - uses: actions/upload-artifact@v4
         with:
