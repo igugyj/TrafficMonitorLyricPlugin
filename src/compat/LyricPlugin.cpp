@@ -67,6 +67,7 @@ INT_PTR CALLBACK CLyricPlugin::OptionsDlgProc(HWND hDlg, UINT msg, WPARAM wParam
         SetDlgItemText(hDlg, IDC_FONT_EDIT, data->font_name.c_str());
         SetDlgItemInt(hDlg, IDC_WIDTH_EDIT, data->item_width, FALSE);
         SetDlgItemInt(hDlg, IDC_SPEED_EDIT, data->scroll_speed, FALSE);
+        CheckDlgButton(hDlg, IDC_DOUBLE_LINE_CHECK, data->double_line_exclusive ? BST_CHECKED : BST_UNCHECKED);
 
         HWND hCombo = GetDlgItem(hDlg, IDC_FONT_COMBO);
         SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)L"小");
@@ -113,6 +114,7 @@ INT_PTR CALLBACK CLyricPlugin::OptionsDlgProc(HWND hDlg, UINT msg, WPARAM wParam
             if (data->item_width < 0) data->item_width = 0;
             data->scroll_speed = GetDlgItemInt(hDlg, IDC_SPEED_EDIT, &translated, FALSE);
             if (data->scroll_speed < 0) data->scroll_speed = 0;
+            data->double_line_exclusive = (IsDlgButtonChecked(hDlg, IDC_DOUBLE_LINE_CHECK) == BST_CHECKED);
             HWND hCombo = GetDlgItem(hDlg, IDC_FONT_COMBO);
             data->font_size = (int)SendMessage(hCombo, CB_GETCURSEL, 0, 0) + 2;
             wchar_t font_buf[LF_FACESIZE];
@@ -218,6 +220,11 @@ const wchar_t* CLyricPlugin::CLyricItem::GetItemValueSampleText() const
 bool CLyricPlugin::CLyricItem::IsCustomDraw() const
 {
     return true;
+}
+
+int CLyricPlugin::CLyricItem::IsDoubleLineExclusive() const
+{
+    return CDataManager::Instance().m_setting_data.double_line_exclusive ? 1 : 0;
 }
 
 int CLyricPlugin::CLyricItem::GetItemWidthEx(void* hDC) const

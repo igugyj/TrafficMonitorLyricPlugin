@@ -39,6 +39,7 @@ void CDataManager::LoadConfig(const std::wstring& config_dir)
     m_setting_data.item_width = GetPrivateProfileInt(L"config", L"item_width", 0, m_config_path.c_str());
     m_setting_data.font_size = GetPrivateProfileInt(L"config", L"font_size", 3, m_config_path.c_str());
     m_setting_data.scroll_speed = GetPrivateProfileInt(L"config", L"scroll_speed", 30, m_config_path.c_str());
+    m_setting_data.double_line_exclusive = (GetPrivateProfileInt(L"config", L"double_line_exclusive", 1, m_config_path.c_str()) != 0);
 
     wchar_t font_buf[LF_FACESIZE];
     GetPrivateProfileString(L"config", L"font_name", L"Microsoft YaHei UI", font_buf, LF_FACESIZE, m_config_path.c_str());
@@ -63,6 +64,8 @@ void CDataManager::SaveConfig() const
     WritePrivateProfileString(L"config", L"font_size", buff, m_config_path.c_str());
     swprintf_s(buff, L"%d", m_setting_data.scroll_speed);
     WritePrivateProfileString(L"config", L"scroll_speed", buff, m_config_path.c_str());
+    swprintf_s(buff, L"%d", m_setting_data.double_line_exclusive ? 1 : 0);
+    WritePrivateProfileString(L"config", L"double_line_exclusive", buff, m_config_path.c_str());
     WritePrivateProfileString(L"config", L"font_name", m_setting_data.font_name.c_str(), m_config_path.c_str());
 }
 

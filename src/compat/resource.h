@@ -9,6 +9,7 @@
 #define IDC_SPEED_EDIT                  1004
 #define IDC_FONT_EDIT                   1005
 #define IDC_FONT_BUTTON                 1006
+#define IDC_DOUBLE_LINE_CHECK           1007
 
 #define VER_MAJOR                       0
 #define VER_MINOR                       2
@@ -24,7 +25,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        102
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1007
+#define _APS_NEXT_CONTROL_VALUE         1008
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -29,11 +29,13 @@ Two GitHub Actions workflows in `.github/workflows/`:
 - **Config**: Auto-derived from DLL filename (`LyricPlugin.ini`), written via Win32 INI APIs. Directory supplied by TrafficMonitor via `OnExtenedInfo(EI_CONFIG_DIR)`. Destructor `CDataManager::~CDataManager()` calls `SaveConfig()`.
   - **Hot-reload**: `ShowOptionsDialog()` calls `SaveConfig()` then `ApplySettings()` to push port change to the HTTP client immediately. Without `ApplySettings()`, the old port persists until restart.
 - **Font size**: encoded as `2` (small, 0.6×height), `3` (medium, 0.75×), `4` (large, 0.9×). Default: `3`.
+- **API v7/v8 dual support**: Bundled `src/compat/PluginInterface.h` is synced verbatim from upstream master (API **v8**, UTF-8 BOM). The plugin reports v8 to any host; on v7 hosts (e.g. release ≤ v1.86) the extra vtables are simply never called — safe degradation. `CLyricItem::IsDoubleLineExclusive()` returns 1 when the `double_line_exclusive` setting (INI key `double_line_exclusive`, default **1**) is on — v8 hosts then give the item a full-height cell in grouped/side taskbar layouts. `DrawItemEx` is intentionally NOT overridden (host falls back to `DrawItem`).
 
 ## Key conventions
 
 - Uses `__ImageBase` linker symbol for module path resolution.
 - Dialog uses `DialogBoxParam` with `SettingData*` as `lParam`. Font browse uses `ChooseFont` Win32 dialog.
+- `src/compat/LyricPlugin.rc` is **UTF-16 LE** (BOM `FF FE`) with Chinese strings; never edit with plain text tools — modify via PowerShell byte-safe transforms (read/write with `[System.Text.Encoding]::Unicode`, build Chinese strings from `[char[]]` code points, e.g. `-join ([char[]]@(0x5E03,0x5C40))`). Do NOT wrap in a PowerShell function taking `[int[]]` — positional binding drops all but the first element.
 - Dark mode text: `RGB(230,230,230)`, light mode: `RGB(30,30,30)`.
 - Precompiled header in `src/core/pch.h` — include that first in all `.cpp` files.
 - Only dependency outside Windows SDK: nlohmann/json (single header, no package manager).

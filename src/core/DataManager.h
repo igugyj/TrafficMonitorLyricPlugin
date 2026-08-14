@@ -8,6 +8,7 @@ struct SettingData
     int item_width{ 0 };
     int font_size{ 3 };
     int scroll_speed{ 30 };
+    bool double_line_exclusive{ true };
     std::wstring font_name{ L"Microsoft YaHei UI" };
 };
 
