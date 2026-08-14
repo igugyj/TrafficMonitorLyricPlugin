@@ -22,7 +22,7 @@
 
 在 [Releases](https://github.com/igugyj/TrafficMonitor-LyricPlugin/releases) 页面下载最新版本，解压到 TrafficMonitor 的插件目录即可。
 
-可以在`dist`分支上查看可能的最新构建。
+可以在 [dist](https://github.com/igugyj/TrafficMonitorLyricPlugin/tree/dist) 分支上查看可能的最新构建。
 
 ## 构建
 
