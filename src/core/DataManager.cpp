@@ -80,14 +80,33 @@ void CDataManager::FetchLyric()
     LXStatusData data;
     if (m_api.FetchStatus(data))
     {
-        m_current_status = data.status;
-        m_current_name = data.name;
-        m_current_singer = data.singer;
+        m_fail_count = 0;
+        m_pending_status = data.status;
+        m_pending_name = data.name;
+        m_pending_singer = data.singer;
+        m_pending_lyric = data.lyric_line;
+        m_pending_valid = true;
+    }
+    else if (++m_fail_count >= 2)
+    {
+        m_pending_status.clear();
+        m_pending_name.clear();
+        m_pending_singer.clear();
+        m_pending_lyric.clear();
+        m_pending_valid = true;
+    }
+}
 
-        if (data.lyric_line != m_current_lyric)
-        {
-            m_current_lyric = data.lyric_line;
-            m_lyric_change_time = GetTickCount64();
-        }
+void CDataManager::CommitPending()
+{
+    if (!m_pending_valid) return;
+    m_pending_valid = false;
+    m_current_status = m_pending_status;
+    m_current_name = m_pending_name;
+    m_current_singer = m_pending_singer;
+    if (m_pending_lyric != m_current_lyric)
+    {
+        m_current_lyric = m_pending_lyric;
+        m_lyric_change_time = GetTickCount64();
     }
 }

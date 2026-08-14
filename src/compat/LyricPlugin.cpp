@@ -226,6 +226,8 @@ bool CLyricPlugin::CLyricItem::IsCustomDraw() const
 
 int CLyricPlugin::CLyricItem::GetItemWidthEx(void* hDC) const
 {
+    CDataManager::Instance().CommitPending();
+
     const std::wstring& status = CDataManager::Instance().GetCurrentStatus();
     if (status != L"playing") return 0;
 
@@ -265,7 +267,11 @@ int CLyricPlugin::CLyricItem::GetItemWidthEx(void* hDC) const
     CSize size = pDC->GetTextExtent(text.c_str(), (int)text.size());
 
     pDC->SelectObject(old_font);
-    return size.cx + 8;
+
+    int width = size.cx + 8;
+    if (width > 480) width = 480;
+    if (width < 32) width = 32;
+    return width;
 }
 
 void CLyricPlugin::CLyricItem::DrawItem(void* hDC, int x, int y, int w, int h, bool dark_mode)

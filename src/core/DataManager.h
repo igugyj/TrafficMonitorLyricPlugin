@@ -25,6 +25,7 @@ public:
     void SaveConfig() const;
     void ApplySettings();
     void FetchLyric();
+    void CommitPending();
 
     const std::wstring& GetCurrentLyric() const { return m_current_lyric; }
     const std::wstring& GetCurrentStatus() const { return m_current_status; }
@@ -37,6 +38,12 @@ public:
 private:
     static CDataManager m_instance;
     std::wstring m_config_path;
+    std::wstring m_pending_lyric;
+    std::wstring m_pending_status;
+    std::wstring m_pending_name;
+    std::wstring m_pending_singer;
+    bool m_pending_valid{ false };
+    int m_fail_count{ 0 };
     std::wstring m_current_lyric;
     std::wstring m_current_status;
     std::wstring m_current_name;

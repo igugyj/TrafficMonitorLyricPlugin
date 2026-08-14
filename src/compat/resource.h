@@ -13,12 +13,12 @@
 
 #define VER_MAJOR 0
 #define VER_MINOR 2
-#define VER_PATCH 1
+#define VER_PATCH 7
 #ifndef VER_BUILD
 #define VER_BUILD 0
 #endif
 
-#define VER_FILE_VERSION_STR "0.2.1"
+#define VER_FILE_VERSION_STR "0.2.7"
 #define VER_PRODUCT_VERSION_STR VER_FILE_VERSION_STR
 
 #ifdef APSTUDIO_INVOKED

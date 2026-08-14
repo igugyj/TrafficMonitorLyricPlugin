@@ -23,8 +23,8 @@ Two GitHub Actions workflows in `.github/workflows/`:
 ## Architecture
 
 - **Entrypoint**: `TMPluginGetInstance()` at `src/compat/LyricPlugin.cpp:185` — returns singleton `CLyricPlugin::m_instance`.
-- **Data flow**: `DataRequired()` → `CDataManager::FetchLyric()` → `CLXMusicAPI::FetchStatus()` → HTTP GET `127.0.0.1:23330/status` → JSON parsed with nlohmann/json (bundled `src/thirdparty/json.hpp`).
-- **Rendering**: `CLyricItem` uses `IsCustomDraw()=true`. Auto-width or fixed-width with scroll.
+- **Data flow**: `DataRequired()` → `CDataManager::FetchLyric()` → `CLXMusicAPI::FetchStatus()` → HTTP GET `127.0.0.1:23330/status` → JSON parsed with nlohmann/json (bundled `src/thirdparty/json.hpp`). On failure, lyrics clear after 2 consecutive failed fetches (~2 s, `m_fail_count`), so the item hides when the API goes silent.
+- **Rendering**: `CLyricItem` uses `IsCustomDraw()=true`. Auto-width or fixed-width with scroll. `FetchLyric()` only fills a pending buffer; `GetItemWidthEx` (the host's 1 Hz width-sampling point) calls `CommitPending()` so the width change and the new lyric render in the same host frame — no clipped intermediate frames, width always matches the line shown. Auto width = exact line width, capped at 480px; returns 0 when not playing (item hidden). Trade-off: lyric display lags up to ~1 s (committed only at the 1 Hz sample).
 - **Scroll animation**: idle 500ms → scroll at `scroll_speed` px/s → pause 500ms → reset.
 - **Config**: Fixed filename `LyricPlugin.ini` (decoupled from DLL filename — renaming the DLL keeps settings), written via Win32 INI APIs. Directory supplied by TrafficMonitor via `OnExtenedInfo(EI_CONFIG_DIR)`; falls back to the DLL's own directory. Destructor `CDataManager::~CDataManager()` calls `SaveConfig()`.
   - **Keys**: `port` (23330), `item_width` (0=auto), `font_size` (2-4), `scroll_speed` (30), `timeout` (3000ms), `font_name`. All keys have defaults and are clamped after load (invalid/out-of-range values fall back to defaults; note `GetPrivateProfileInt` returns 0 — not the default — when a value is unparseable).
