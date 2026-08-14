@@ -26,8 +26,10 @@ Two GitHub Actions workflows in `.github/workflows/`:
 - **Data flow**: `DataRequired()` → `CDataManager::FetchLyric()` → `CLXMusicAPI::FetchStatus()` → HTTP GET `127.0.0.1:23330/status` → JSON parsed with nlohmann/json (bundled `src/thirdparty/json.hpp`).
 - **Rendering**: `CLyricItem` uses `IsCustomDraw()=true`. Auto-width or fixed-width with scroll.
 - **Scroll animation**: idle 500ms → scroll at `scroll_speed` px/s → pause 500ms → reset.
-- **Config**: Auto-derived from DLL filename (`LyricPlugin.ini`), written via Win32 INI APIs. Directory supplied by TrafficMonitor via `OnExtenedInfo(EI_CONFIG_DIR)`. Destructor `CDataManager::~CDataManager()` calls `SaveConfig()`.
-  - **Hot-reload**: `ShowOptionsDialog()` calls `SaveConfig()` then `ApplySettings()` to push port change to the HTTP client immediately. Without `ApplySettings()`, the old port persists until restart.
+- **Config**: Fixed filename `LyricPlugin.ini` (decoupled from DLL filename — renaming the DLL keeps settings), written via Win32 INI APIs. Directory supplied by TrafficMonitor via `OnExtenedInfo(EI_CONFIG_DIR)`; falls back to the DLL's own directory. Destructor `CDataManager::~CDataManager()` calls `SaveConfig()`.
+  - **Keys**: `port` (23330), `item_width` (0=auto), `font_size` (2-4), `scroll_speed` (30), `timeout` (3000ms), `font_name`. All keys have defaults and are clamped after load (invalid/out-of-range values fall back to defaults; note `GetPrivateProfileInt` returns 0 — not the default — when a value is unparseable).
+  - **Hot-reload**: `ShowOptionsDialog()` calls `SaveConfig()` then `ApplySettings()` to push port/timeout to the HTTP client immediately. Without `ApplySettings()`, the old values persist until restart.
+- **HTTP timeouts**: `CLXMusicAPI::HttpGet` applies the configurable `timeout` to all four WinHTTP timeouts (resolve/connect/send/receive) via `WinHttpSetTimeouts`.
 - **Font size**: encoded as `2` (small, 0.6×height), `3` (medium, 0.75×), `4` (large, 0.9×). Default: `3`.
 
 ## Key conventions
