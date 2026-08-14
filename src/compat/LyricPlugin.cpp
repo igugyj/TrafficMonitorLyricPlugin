@@ -4,9 +4,14 @@
 
 CLyricPlugin CLyricPlugin::m_instance;
 
-CLyricPlugin::CLyricPlugin()
+static double GetFontRatio(int font_size)
 {
+    if (font_size == 2) return 0.6;
+    if (font_size == 4) return 0.9;
+    return 0.75;
 }
+
+CLyricPlugin::CLyricPlugin() = default;
 
 CLyricPlugin& CLyricPlugin::Instance()
 {
@@ -240,21 +245,17 @@ int CLyricPlugin::CLyricItem::GetItemWidthEx(void* hDC) const
     CDC* pDC = CDC::FromHandle((HDC)hDC);
     SettingData& setting = CDataManager::Instance().m_setting_data;
 
-    double font_ratio = 0.75;
-    if (setting.font_size == 2) font_ratio = 0.6;
-    else if (setting.font_size == 4) font_ratio = 0.9;
-
     int height = m_cache_height > 0 ? m_cache_height : 32;
     CFont* p_font = nullptr;
     CFont temp_font;
-    if (setting.font_size == m_cache_font_size && height == m_cache_height && setting.font_name == m_cache_font_name)
+    if (m_cache_height > 0 && setting.font_size == m_cache_font_size && setting.font_name == m_cache_font_name)
     {
         p_font = &m_font;
     }
     else
     {
         LOGFONTW lf = { 0 };
-        lf.lfHeight = -(int)(height * font_ratio);
+        lf.lfHeight = -(int)(height * GetFontRatio(setting.font_size));
         lf.lfWeight = FW_NORMAL;
         lf.lfQuality = CLEARTYPE_QUALITY;
         wcscpy_s(lf.lfFaceName, setting.font_name.c_str());
@@ -286,14 +287,10 @@ void CLyricPlugin::CLyricItem::DrawItem(void* hDC, int x, int y, int w, int h, b
     int font_size = setting.font_size;
     int scroll_speed = setting.scroll_speed;
 
-    double font_ratio = 0.75;
-    if (font_size == 2) font_ratio = 0.6;
-    else if (font_size == 4) font_ratio = 0.9;
-
     if (font_size != m_cache_font_size || h != m_cache_height || setting.font_name != m_cache_font_name)
     {
         LOGFONTW lf = { 0 };
-        lf.lfHeight = -(int)(h * font_ratio);
+        lf.lfHeight = -(int)(h * GetFontRatio(font_size));
         lf.lfWeight = FW_NORMAL;
         lf.lfQuality = CLEARTYPE_QUALITY;
         wcscpy_s(lf.lfFaceName, setting.font_name.c_str());

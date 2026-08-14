@@ -65,7 +65,6 @@ bool CLXMusicAPI::FetchStatus(LXStatusData& out)
     try
     {
         auto j = nlohmann::json::parse(raw);
-        out.valid = true;
         out.status = Utf8ToWide(j.value("status", ""));
         out.name = Utf8ToWide(j.value("name", ""));
         out.singer = Utf8ToWide(j.value("singer", ""));

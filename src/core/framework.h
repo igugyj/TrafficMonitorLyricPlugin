@@ -5,8 +5,6 @@
 #include <SDKDDKVer.h>
 
 #include <afxwin.h>
-#include <afxext.h>
-#include <afxdisp.h>
 
 #ifdef _UNICODE
 #if defined _M_IX86

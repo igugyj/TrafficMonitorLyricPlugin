@@ -3,9 +3,7 @@
 
 CDataManager CDataManager::m_instance;
 
-CDataManager::CDataManager()
-{
-}
+CDataManager::CDataManager() = default;
 
 CDataManager::~CDataManager()
 {
@@ -19,16 +17,16 @@ CDataManager& CDataManager::Instance()
 
 void CDataManager::LoadConfig(const std::wstring& config_dir)
 {
-    HMODULE hModule = reinterpret_cast<HMODULE>(&__ImageBase);
-    wchar_t path[MAX_PATH];
-    GetModuleFileNameW(hModule, path, MAX_PATH);
-    std::wstring module_path = path;
     if (!config_dir.empty())
     {
         m_config_path = config_dir + L"LyricPlugin.ini";
     }
     else
     {
+        HMODULE hModule = reinterpret_cast<HMODULE>(&__ImageBase);
+        wchar_t path[MAX_PATH];
+        GetModuleFileNameW(hModule, path, MAX_PATH);
+        std::wstring module_path = path;
         size_t slash = module_path.find_last_of(L"\\/");
         m_config_path = module_path.substr(0, slash + 1) + L"LyricPlugin.ini";
     }
