@@ -17,7 +17,7 @@
 #define VER_BUILD                       0
 #endif
 
-#define VER_FILE_VERSION_STR            "0.2.0"
+#define VER_FILE_VERSION_STR "0.2.1"
 #define VER_PRODUCT_VERSION_STR         VER_FILE_VERSION_STR
 
 #ifdef APSTUDIO_INVOKED
