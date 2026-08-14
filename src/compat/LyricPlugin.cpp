@@ -238,15 +238,25 @@ int CLyricPlugin::CLyricItem::GetItemWidthEx(void* hDC) const
     if (setting.font_size == 2) font_ratio = 0.6;
     else if (setting.font_size == 4) font_ratio = 0.9;
 
-    int estimated_h = 32;
-    LOGFONTW lf = { 0 };
-    lf.lfHeight = -(int)(estimated_h * font_ratio);
-    lf.lfWeight = FW_NORMAL;
-    lf.lfQuality = CLEARTYPE_QUALITY;
-    wcscpy_s(lf.lfFaceName, setting.font_name.c_str());
-    CFont font;
-    font.CreateFontIndirectW(&lf);
-    CFont* old_font = pDC->SelectObject(&font);
+    int height = m_cache_height > 0 ? m_cache_height : 32;
+    CFont* p_font = nullptr;
+    CFont temp_font;
+    if (setting.font_size == m_cache_font_size && height == m_cache_height && setting.font_name == m_cache_font_name)
+    {
+        p_font = &m_font;
+    }
+    else
+    {
+        LOGFONTW lf = { 0 };
+        lf.lfHeight = -(int)(height * font_ratio);
+        lf.lfWeight = FW_NORMAL;
+        lf.lfQuality = CLEARTYPE_QUALITY;
+        wcscpy_s(lf.lfFaceName, setting.font_name.c_str());
+        temp_font.CreateFontIndirectW(&lf);
+        p_font = &temp_font;
+    }
+
+    CFont* old_font = pDC->SelectObject(p_font);
 
     CSize size = pDC->GetTextExtent(text.c_str(), (int)text.size());
 
