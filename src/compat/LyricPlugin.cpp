@@ -4,9 +4,14 @@
 
 CLyricPlugin CLyricPlugin::m_instance;
 
-CLyricPlugin::CLyricPlugin()
+static double GetFontRatio(int font_size)
 {
+    if (font_size == 2) return 0.6;
+    if (font_size == 4) return 0.9;
+    return 0.75;
 }
+
+CLyricPlugin::CLyricPlugin() = default;
 
 CLyricPlugin& CLyricPlugin::Instance()
 {
@@ -67,6 +72,7 @@ INT_PTR CALLBACK CLyricPlugin::OptionsDlgProc(HWND hDlg, UINT msg, WPARAM wParam
         SetDlgItemText(hDlg, IDC_FONT_EDIT, data->font_name.c_str());
         SetDlgItemInt(hDlg, IDC_WIDTH_EDIT, data->item_width, FALSE);
         SetDlgItemInt(hDlg, IDC_SPEED_EDIT, data->scroll_speed, FALSE);
+        SetDlgItemInt(hDlg, IDC_TIMEOUT_EDIT, data->timeout_ms / 1000, FALSE);
 
         HWND hCombo = GetDlgItem(hDlg, IDC_FONT_COMBO);
         SendMessage(hCombo, CB_ADDSTRING, 0, (LPARAM)L"小");
@@ -113,6 +119,9 @@ INT_PTR CALLBACK CLyricPlugin::OptionsDlgProc(HWND hDlg, UINT msg, WPARAM wParam
             if (data->item_width < 0) data->item_width = 0;
             data->scroll_speed = GetDlgItemInt(hDlg, IDC_SPEED_EDIT, &translated, FALSE);
             if (data->scroll_speed < 0) data->scroll_speed = 0;
+            data->timeout_ms = GetDlgItemInt(hDlg, IDC_TIMEOUT_EDIT, &translated, FALSE) * 1000;
+            if (data->timeout_ms < 1000) data->timeout_ms = 1000;
+            if (data->timeout_ms > 60000) data->timeout_ms = 60000;
             HWND hCombo = GetDlgItem(hDlg, IDC_FONT_COMBO);
             data->font_size = (int)SendMessage(hCombo, CB_GETCURSEL, 0, 0) + 2;
             wchar_t font_buf[LF_FACESIZE];
@@ -222,6 +231,8 @@ bool CLyricPlugin::CLyricItem::IsCustomDraw() const
 
 int CLyricPlugin::CLyricItem::GetItemWidthEx(void* hDC) const
 {
+    CDataManager::Instance().CommitPending();
+
     const std::wstring& status = CDataManager::Instance().GetCurrentStatus();
     if (status != L"playing") return 0;
 
@@ -234,21 +245,17 @@ int CLyricPlugin::CLyricItem::GetItemWidthEx(void* hDC) const
     CDC* pDC = CDC::FromHandle((HDC)hDC);
     SettingData& setting = CDataManager::Instance().m_setting_data;
 
-    double font_ratio = 0.75;
-    if (setting.font_size == 2) font_ratio = 0.6;
-    else if (setting.font_size == 4) font_ratio = 0.9;
-
     int height = m_cache_height > 0 ? m_cache_height : 32;
     CFont* p_font = nullptr;
     CFont temp_font;
-    if (setting.font_size == m_cache_font_size && height == m_cache_height && setting.font_name == m_cache_font_name)
+    if (m_cache_height > 0 && setting.font_size == m_cache_font_size && setting.font_name == m_cache_font_name)
     {
         p_font = &m_font;
     }
     else
     {
         LOGFONTW lf = { 0 };
-        lf.lfHeight = -(int)(height * font_ratio);
+        lf.lfHeight = -(int)(height * GetFontRatio(setting.font_size));
         lf.lfWeight = FW_NORMAL;
         lf.lfQuality = CLEARTYPE_QUALITY;
         wcscpy_s(lf.lfFaceName, setting.font_name.c_str());
@@ -261,7 +268,11 @@ int CLyricPlugin::CLyricItem::GetItemWidthEx(void* hDC) const
     CSize size = pDC->GetTextExtent(text.c_str(), (int)text.size());
 
     pDC->SelectObject(old_font);
-    return size.cx + 8;
+
+    int width = size.cx + 8;
+    if (width > 480) width = 480;
+    if (width < 32) width = 32;
+    return width;
 }
 
 void CLyricPlugin::CLyricItem::DrawItem(void* hDC, int x, int y, int w, int h, bool dark_mode)
@@ -276,14 +287,10 @@ void CLyricPlugin::CLyricItem::DrawItem(void* hDC, int x, int y, int w, int h, b
     int font_size = setting.font_size;
     int scroll_speed = setting.scroll_speed;
 
-    double font_ratio = 0.75;
-    if (font_size == 2) font_ratio = 0.6;
-    else if (font_size == 4) font_ratio = 0.9;
-
     if (font_size != m_cache_font_size || h != m_cache_height || setting.font_name != m_cache_font_name)
     {
         LOGFONTW lf = { 0 };
-        lf.lfHeight = -(int)(h * font_ratio);
+        lf.lfHeight = -(int)(h * GetFontRatio(font_size));
         lf.lfWeight = FW_NORMAL;
         lf.lfQuality = CLEARTYPE_QUALITY;
         wcscpy_s(lf.lfFaceName, setting.font_name.c_str());

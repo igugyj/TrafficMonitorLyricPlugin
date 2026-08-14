@@ -39,6 +39,9 @@ bool CLXMusicAPI::HttpGet(const wchar_t* path, std::string& out)
         nullptr, nullptr, nullptr, 0));
     if (!request) return false;
 
+    if (!WinHttpSetTimeouts(request.get(), m_timeout_ms, m_timeout_ms, m_timeout_ms, m_timeout_ms))
+        return false;
+
     out.clear();
     char buf[4096];
     if (WinHttpSendRequest(request.get(), nullptr, 0, nullptr, 0, 0, 0) &&
@@ -62,7 +65,6 @@ bool CLXMusicAPI::FetchStatus(LXStatusData& out)
     try
     {
         auto j = nlohmann::json::parse(raw);
-        out.valid = true;
         out.status = Utf8ToWide(j.value("status", ""));
         out.name = Utf8ToWide(j.value("name", ""));
         out.singer = Utf8ToWide(j.value("singer", ""));
