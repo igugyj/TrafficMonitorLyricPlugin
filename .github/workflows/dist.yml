@@ -49,6 +49,7 @@ jobs:
           $now = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm UTC')
           (Get-Content -Raw tpl/dist-README.tpl) -replace '{version}', "v$maj.$min.$pat" `
             -replace '{date}', $now `
+            -replace '{branch}', '${{ github.ref_name }}' `
             -replace '{sha}', $sha `
             -replace '{repo}', '${{ github.repository }}' `
             -replace '{owner}', '${{ github.repository_owner }}' | Out-File -Encoding utf8 dist/README.md

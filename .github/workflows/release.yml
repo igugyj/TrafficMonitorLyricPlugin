@@ -57,3 +57,7 @@ jobs:
           gh release create "$env:VER_TAG" staging/* --generate-notes `
             --notes-start-tag "${{ steps.prev.outputs.prev_tag }}" `
             --title "LyricPlugin $env:VER_TAG"
+          $body = gh release view "$env:VER_TAG" --json body -q .body
+          $body += "`n`n---`n## Prebuilt binaries`nPublished on the [**dist** branch](https://github.com/${{ github.repository }}/tree/dist)."
+          $body | Out-File -Encoding utf8 notes_body.md
+          gh release edit "$env:VER_TAG" --notes-file notes_body.md

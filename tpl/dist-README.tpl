@@ -2,6 +2,7 @@
 
 - Version: {version}
 - Build: {date}
+- Branch: [{branch}](https://github.com/{repo}/tree/{branch})
 - Commit: {sha}
 
 ## Files
