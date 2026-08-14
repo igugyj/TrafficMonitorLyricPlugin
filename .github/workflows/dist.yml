@@ -37,6 +37,22 @@ jobs:
           Copy-Item "Bin\${{ matrix.arch.out }}\Release\plugins\LyricPlugin.dll" "dist/${{ matrix.arch.out }}/"
           Copy-Item "Bin\${{ matrix.arch.out }}\Release\plugins\LyricPlugin.pdb" "dist/${{ matrix.arch.out }}/"
 
+      - name: Create README.md
+        if: matrix.arch.msbuild == 'x64'
+        shell: pwsh
+        run: |
+          $h = Get-Content -Raw src/compat/resource.h
+          $maj = [regex]::Match($h, '#define\s+VER_MAJOR\s+(\d+)').Groups[1].Value
+          $min = [regex]::Match($h, '#define\s+VER_MINOR\s+(\d+)').Groups[1].Value
+          $pat = [regex]::Match($h, '#define\s+VER_PATCH\s+(\d+)').Groups[1].Value
+          $sha = "$env:GITHUB_SHA".Substring(0, 7)
+          $now = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm UTC')
+          (Get-Content -Raw tpl/dist-README.tpl) -replace '{version}', "v$maj.$min.$pat" `
+            -replace '{date}', $now `
+            -replace '{sha}', $sha `
+            -replace '{repo}', '${{ github.repository }}' `
+            -replace '{owner}', '${{ github.repository_owner }}' | Out-File -Encoding utf8 dist/README.md
+
       - uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.arch.out }}
